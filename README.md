@@ -1,7 +1,7 @@
-### TSP
-##Asymmetric Travelling Salesman Problem Implementation
+# TSP
+## Asymmetric Travelling Salesman Problem Implementation
 
-#ATSP with Miller-Tucker-Zemlin formulation 
+### ATSP with Miller-Tucker-Zemlin formulation 
 
 
 TSPmtz.mos ------> Miller-Tucker-Zemlin Formulation
