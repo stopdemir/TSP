@@ -3,6 +3,9 @@
 
 ### ATSP with Miller-Tucker-Zemlin formulation 
 
+<p align="center">
+  <img src='/TSP.jpg'/>
+</p>
 
 TSPmtz.mos ------> Miller-Tucker-Zemlin Formulation
 
