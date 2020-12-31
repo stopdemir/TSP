@@ -1,0 +1,74 @@
+!@encoding CP1254
+model "ATSP"
+uses "mmxprs"; !gain access to the Xpress-Optimizer solver
+forward procedure break_subtour
+!optional parameters section
+
+!sample declarations section
+declarations
+totalNodeNumber = 25
+I = 1..totalNodeNumber
+x : array(I,I) of mpvar 
+c : array(I,I) of integer 
+end-declarations
+
+initializations from 'c.dat'
+c
+end-initializations
+writeln("Begin running model")
+total_arc_length:= sum(i,j in I | i<>j) c(i,j)*x(i,j)
+forall(i,j in I | i<>j) x(i,j) is_binary
+forall(i in I)  constaintsOne(i) := sum(j in I | i<>j) x(i,j) = 1
+forall(j in I)  constraintsTwo(j):= sum(i in I | i<>j) x(i,j) = 1
+minimize(total_arc_length)
+break_subtour
+writeln("End running model")
+procedure break_subtour
+	
+declarations
+ SmallestSubTour, Tour, AllNodes: set of integer
+end-declarations
+
+forall(i in I) 
+ NextNode(i):= integer(round(getsol(sum(j in I) j*x(i,j) )))
+ 
+Tour:={}                          !THE TOUR WITH NODE 1 (BEGINNING AND ENDING NODE)
+first:=1
+repeat
+ Tour+={first}
+ first:=NextNode(first)
+until first=1
+size:=getsize(Tour)
+ 
+if size < totalNodeNumber then        ! TO CHECK WHETHER THERE IS A SUBTOUR (the smallest one)
+ SmallestSubTour := Tour
+ if size > 2 then
+ AllNodes := Tour 
+ forall(i in I) do
+  if(i not in AllNodes) then
+   Tour := {}
+   first:= i
+   repeat
+    Tour += {first}
+    first := NextNode(first)
+   until first = i
+   AllNodes += Tour
+   if getsize(Tour) < size then
+    SmallestSubTour := Tour
+    size := getsize(SmallestSubTour)
+   end-if
+    if size = 2 then
+     break
+   end-if 
+  end-if 
+ end-do        
+end-if
+    
+ sum(i in SmallestSubTour,j in I - SmallestSubTour) x(i,j) >= 1  ! METHOD-2
+
+ minimize(total_arc_length)                      !SOLVE THE MODEL AGAIN
+
+end-if 
+end-procedure
+
+end-model

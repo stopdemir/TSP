@@ -1,0 +1,45 @@
+!@encoding CP1254
+model "ATSP"
+uses "mmxprs"; !gain access to the Xpress-Optimizer solver
+
+!optional parameters section
+parameters
+!  SAMPLEPARAM1='c:\test\'
+!  SAMPLEPARAM2=false
+   PROJECTDIR='' ! for when file is added to project
+end-parameters
+
+!sample declarations section
+declarations
+totalNodeNumber = 25
+I = 1..totalNodeNumber
+I_2 = 2..totalNodeNumber
+x : array(I,I) of mpvar 
+u : array(I) of mpvar
+c : array(I,I) of integer 
+end-declarations
+
+if PROJECTDIR <> '' then
+  setparam('workdir', PROJECTDIR)
+  writeln("Project directory: " + PROJECTDIR)
+end-if
+initializations from 'c.dat'
+c
+end-initializations
+
+writeln("Begin running model")
+total_arc_length := sum(i,j in I | i<>j) c(i,j)*x(i,j)
+forall(i,j in I | i<>j) x(i,j) is_binary
+forall(i in I) u(i) is_integer
+forall(i in I_2) u(i) >= 2
+forall(i in I) u(i) <= totalNodeNumber
+forall(i in I)    constaintsOne(i)   := sum(j in I | j <> i) x(i,j) = 1
+forall(i in I)    constraintsTwo(i)  := sum(k in I | k <> i) x(k,i) = 1
+forall(i,j in I_2| i<>j)  constraintsThree(i,j):= u(i) - u(j) + totalNodeNumber*x(i,j) <= totalNodeNumber - 1
+constFour := u(1) = 1
+ 
+minimize(total_arc_length)
+
+writeln("End running model")
+
+end-model
