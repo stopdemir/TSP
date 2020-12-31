@@ -9,6 +9,6 @@
 
 TSPmtz.mos ------> Miller-Tucker-Zemlin Formulation
 
-TSPseq.mos ------> Subtour elimation with iteratively
+TSPseq.mos ------> Subtour elimation iteratively 
 
 c.dat -----------> Required Input Data Set ( Note that the matrix isn't symmetric )
